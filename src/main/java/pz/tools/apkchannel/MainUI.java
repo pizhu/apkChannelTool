@@ -1,8 +1,12 @@
 package pz.tools.apkchannel;
 
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.meituan.android.walle.WalleCommandLine;
+import com.meituan.android.walle.commands.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -17,7 +21,10 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainUI {
     private JTextField tfApkFile;
@@ -56,31 +63,7 @@ public class MainUI {
                     return;
                 }
 
-
-                File file = new File(this.getClass().getResource("/walle/walle-cli-all.jar").toURI());
-
-                System.out.println("存在:"+file.exists()+";path"+file.getAbsolutePath());
-
-                ProcessBuilder processBuilder = new ProcessBuilder();
-
-                // 设置命令和参数
-                processBuilder.command(
-                        "java", "-jar", file.getAbsolutePath(), "batch", "-f",
-                        channelsFile.getAbsolutePath(),
-                        apkFile.getAbsolutePath());
-
-                // 启动进程
-                Process process = processBuilder.start();
-                btnGo.setEnabled(false);
-
-                int result = process.waitFor();
-                btnGo.setEnabled(true);
-
-                if (result == 0) {
-                    JOptionPane.showMessageDialog(null, "打包成功", "消息", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "打包失败，未知错误.code="+result, "消息", JOptionPane.WARNING_MESSAGE);
-                }
+                build();
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "打包失败:" + ex.getMessage(), "消息", JOptionPane.WARNING_MESSAGE);
@@ -97,6 +80,38 @@ public class MainUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+    }
+
+    private void build(){
+        btnGo.setEnabled(false);
+        Map<String, IWalleCommand> subCommandList = new HashMap();
+        subCommandList.put("batch", new BatchCommand());
+        WalleCommandLine walleCommandLine = new WalleCommandLine();
+        JCommander commander = new JCommander(walleCommandLine);
+        Iterator var4 = subCommandList.entrySet().iterator();
+
+        while(var4.hasNext()) {
+            Map.Entry<String, IWalleCommand> commandEntry = (Map.Entry)var4.next();
+            commander.addCommand((String)commandEntry.getKey(), commandEntry.getValue());
+        }
+
+        try {
+            commander.parse("batch","-f",channelsFile.getAbsolutePath(),apkFile.getAbsolutePath());
+        } catch (ParameterException var6) {
+            System.out.println(var6.getMessage());
+            commander.usage();
+            JOptionPane.showMessageDialog(null, "打包失败,错误："+var6.getMessage(), "消息", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        walleCommandLine.parse(commander);
+        String parseCommand = commander.getParsedCommand();
+        if (parseCommand != null) {
+            ((IWalleCommand)subCommandList.get(parseCommand)).parse();
+        }
+
+        JOptionPane.showMessageDialog(null, "打包成功", "消息", JOptionPane.INFORMATION_MESSAGE);
+        btnGo.setEnabled(true);
     }
 
 
