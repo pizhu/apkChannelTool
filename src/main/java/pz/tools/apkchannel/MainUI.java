@@ -49,7 +49,7 @@ public class MainUI {
             }
         });
         btnChannelSelect.addActionListener(e -> {
-            channelsFile = choseFile(".txt", "TXT Files (*.apk)");
+            channelsFile = choseFile(".txt", "TXT Files (*.txt)");
             if (channelsFile != null) {
                 tfChannelsFile.setText(channelsFile.getAbsolutePath());
             }
