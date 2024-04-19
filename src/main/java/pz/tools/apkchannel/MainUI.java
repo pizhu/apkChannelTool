@@ -46,6 +46,8 @@ public class MainUI {
     private JTextField tfAlikey;
     private JLabel label_key;
     private JLabel label_ali_key;
+    private JTextField tfAlias;
+    private JLabel label_alias;
 
     private File apkFile;
     private File channelsFile;
@@ -306,7 +308,7 @@ public class MainUI {
      */
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayoutManager(7, 6, new Insets(40, 20, 40, 20), -1, -1));
+        mainPanel.setLayout(new GridLayoutManager(8, 6, new Insets(40, 20, 40, 20), -1, -1));
         mainPanel.setAutoscrolls(true);
         mainPanel.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         tfApkFile = new JTextField();
@@ -324,7 +326,7 @@ public class MainUI {
         Font labelChannelsFont = this.$$$getFont$$$(null, -1, 16, labelChannels.getFont());
         if (labelChannelsFont != null) labelChannels.setFont(labelChannelsFont);
         labelChannels.setText("渠道号配置文件");
-        mainPanel.add(labelChannels, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(labelChannels, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfChannelsFile = new JTextField();
         tfChannelsFile.setBackground(new Color(-263173));
         tfChannelsFile.setEditable(false);
@@ -332,12 +334,12 @@ public class MainUI {
         tfChannelsFile.setMargin(new Insets(2, 6, 2, 6));
         tfChannelsFile.setOpaque(true);
         tfChannelsFile.setText("");
-        mainPanel.add(tfChannelsFile, new GridConstraints(5, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
+        mainPanel.add(tfChannelsFile, new GridConstraints(6, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
         btnChannelSelect = new JButton();
         Font btnChannelSelectFont = this.$$$getFont$$$("JetBrains Mono", -1, 18, btnChannelSelect.getFont());
         if (btnChannelSelectFont != null) btnChannelSelect.setFont(btnChannelSelectFont);
         btnChannelSelect.setText("选择");
-        mainPanel.add(btnChannelSelect, new GridConstraints(5, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnChannelSelect, new GridConstraints(6, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setEnabled(true);
         Font label1Font = this.$$$getFont$$$("Courier New", -1, 14, label1.getFont());
@@ -346,7 +348,7 @@ public class MainUI {
         mainPanel.add(label1, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         jpanel_go = new JPanel();
         jpanel_go.setLayout(new GridLayoutManager(1, 1, new Insets(16, 0, 0, 0), -1, -1));
-        mainPanel.add(jpanel_go, new GridConstraints(6, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        mainPanel.add(jpanel_go, new GridConstraints(7, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         btnGo = new JButton();
         Font btnGoFont = this.$$$getFont$$$("JetBrains Mono", -1, 16, btnGo.getFont());
         if (btnGoFont != null) btnGo.setFont(btnGoFont);
@@ -384,9 +386,14 @@ public class MainUI {
         Font label_ali_keyFont = this.$$$getFont$$$(null, -1, 14, label_ali_key.getFont());
         if (label_ali_keyFont != null) label_ali_key.setFont(label_ali_keyFont);
         label_ali_key.setText("别名密码");
-        mainPanel.add(label_ali_key, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(label_ali_key, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfAlikey = new JTextField();
-        mainPanel.add(tfAlikey, new GridConstraints(4, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        mainPanel.add(tfAlikey, new GridConstraints(5, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        label_alias = new JLabel();
+        label_alias.setText("密钥别名");
+        mainPanel.add(label_alias, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        tfAlias = new JTextField();
+        mainPanel.add(tfAlias, new GridConstraints(4, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**
