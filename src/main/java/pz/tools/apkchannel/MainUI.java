@@ -112,11 +112,11 @@ public class MainUI {
             cbSign.setSelected(config.getSign());
             cbChannel.setSelected(config.getChannel());
 
-            if (!config.getKeystoreFile().isEmpty()) {
+            if (config.getKeystoreFile() != null) {
                 keyStoreFile = new File(config.getKeystoreFile());
             }
 
-            if (!config.getChannelsFile().isEmpty()) {
+            if (config.getChannelsFile() != null) {
                 channelsFile = new File(config.getChannelsFile());
             }
         }
