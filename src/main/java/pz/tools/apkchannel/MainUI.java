@@ -232,6 +232,11 @@ public class MainUI {
 
         // 获取资源文件的输入流
         InputStream exeInputStream = this.getClass().getResourceAsStream("/zipalign.exe");
+
+        if (exeInputStream == null) {
+            throw new Exception("zipalign.exe找不到了");
+        }
+
         // 创建临时文件
         Path tempExePath = Files.createTempFile("tempZipalign", ".exe");
         // 将资源文件的内容写入临时文件
