@@ -3,16 +3,18 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="10" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="40" left="20" bottom="40" right="20"/>
     <constraints>
-      <xy x="20" y="20" width="592" height="575"/>
+      <xy x="20" y="20" width="900" height="1260"/>
     </constraints>
     <properties>
       <autoscrolls value="true"/>
+      <minimumSize width="-1" height="-1"/>
+      <preferredSize width="-1" height="-1"/>
     </properties>
     <border type="none" title=""/>
     <children>
       <component id="75af7" class="javax.swing.JTextField" binding="tfApkFile">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="2" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="250" height="38"/>
           </grid>
         </constraints>
@@ -25,7 +27,7 @@
       </component>
       <component id="79774" class="javax.swing.JButton" binding="btnApkSelect">
         <constraints>
-          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font name="JetBrains Mono" size="18"/>
@@ -34,7 +36,7 @@
       </component>
       <component id="3228" class="javax.swing.JLabel" binding="labelChannels">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="16"/>
@@ -43,7 +45,7 @@
       </component>
       <component id="55eed" class="javax.swing.JTextField" binding="tfChannelsFile">
         <constraints>
-          <grid row="8" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="7" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="250" height="38"/>
           </grid>
         </constraints>
@@ -58,7 +60,7 @@
       </component>
       <component id="90395" class="javax.swing.JButton" binding="btnChannelSelect">
         <constraints>
-          <grid row="8" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font name="JetBrains Mono" size="18"/>
@@ -72,7 +74,7 @@
         <properties>
           <enabled value="true"/>
           <font name="Courier New" size="14"/>
-          <text value="&lt;html&gt;用法（支持拖动）：：&lt;br&gt;1.选择签名或者多渠道打包操作 默认签名+多渠道打包 &lt;br&gt;2.选择apk &lt;br&gt;3.需要签名时，选择签名文件，输入密钥信息 &lt;br&gt;4.需要多渠道打包时，选择.txt格式的渠道号配置文件，示例格式：huawei # 华为 &lt;br&gt;5.多个渠道就换行添加&lt;br&gt;&lt;br&gt;&lt;/html&gt;"/>
+          <text value="&lt;html&gt;用法（支持拖动）：&lt;br&gt;1.选择签名或者多渠道打包操作 默认签名+多渠道打包 &lt;br&gt;2.选择apk &lt;br&gt;3.需要签名时，选择签名文件，输入密钥信息 &lt;br&gt;4.需要多渠道打包时，选择.txt格式的渠道号配置文件，示例格式：huawei # 华为 &lt;br&gt;5.多个渠道就换行添加&lt;br&gt;&lt;br&gt;&lt;/html&gt;"/>
         </properties>
       </component>
       <grid id="e5e00" binding="jpanel_go" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -97,7 +99,7 @@
       </grid>
       <component id="1627a" class="javax.swing.JLabel" binding="labelApk">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="16"/>
@@ -106,7 +108,7 @@
       </component>
       <component id="64d77" class="javax.swing.JLabel">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="64" height="39"/>
           </grid>
         </constraints>
@@ -117,7 +119,7 @@
       </component>
       <component id="9bd4a" class="javax.swing.JButton" binding="btnKeystoreSelect">
         <constraints>
-          <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="78" height="39"/>
           </grid>
         </constraints>
@@ -128,7 +130,7 @@
       </component>
       <component id="4df9a" class="javax.swing.JTextField" binding="tfKeystoreFile">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="250" height="39"/>
           </grid>
         </constraints>
@@ -140,7 +142,7 @@
       </component>
       <component id="89d6" class="javax.swing.JLabel" binding="label_key">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="14"/>
@@ -149,7 +151,7 @@
       </component>
       <component id="c306e" class="javax.swing.JTextField" binding="tfKey">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="100" height="30"/>
           </grid>
         </constraints>
@@ -157,7 +159,7 @@
       </component>
       <component id="8bb7a" class="javax.swing.JLabel" binding="label_ali_key">
         <constraints>
-          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font/>
@@ -166,7 +168,7 @@
       </component>
       <component id="76099" class="javax.swing.JTextField" binding="tfAlikey">
         <constraints>
-          <grid row="7" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="6" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="100" height="30"/>
           </grid>
         </constraints>
@@ -174,7 +176,7 @@
       </component>
       <component id="c1399" class="javax.swing.JLabel" binding="label_alias">
         <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="密钥别名"/>
@@ -182,17 +184,12 @@
       </component>
       <component id="81e46" class="javax.swing.JTextField" binding="tfAlias">
         <constraints>
-          <grid row="6" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties/>
       </component>
-      <vspacer id="e24b5">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
       <component id="5bdd8" class="javax.swing.JCheckBox" binding="cbChannel">
         <constraints>
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
@@ -215,6 +212,31 @@
           <text value="签名"/>
         </properties>
       </component>
+      <scrollpane id="fb12d">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="280"/>
+            <preferred-size width="-1" height="280"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none">
+          <color color="-16777216"/>
+        </border>
+        <children>
+          <component id="6df1a" class="javax.swing.JTextArea" binding="jta_log">
+            <constraints/>
+            <properties>
+              <caretColor color="-16777216"/>
+              <disabledTextColor color="-16777216"/>
+              <enabled value="false"/>
+              <margin top="16" left="16" bottom="16" right="16"/>
+              <selectionColor color="-16777216"/>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>

@@ -7,7 +7,6 @@ import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import com.meituan.android.walle.WalleCommandLine;
 import com.meituan.android.walle.commands.BatchCommand;
 import com.meituan.android.walle.commands.IWalleCommand;
@@ -53,6 +52,7 @@ public class MainUI {
     private JLabel label_alias;
     private JCheckBox cbSign;
     private JCheckBox cbChannel;
+    private JTextArea jta_log;
 
     private File apkFile;
     private File channelsFile;
@@ -138,6 +138,16 @@ public class MainUI {
 
     }
 
+    private void log(String log) {
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                jta_log.append(log);
+                jta_log.append("\n");
+            }
+        });
+    }
+
     private void setDropTarget(JTextField textField, String suffix, FileSelectProcessor selectProcessor) {
         new DropTarget(textField, DnDConstants.ACTION_COPY_OR_MOVE, new DropTargetAdapter() {
             public void drop(DropTargetDropEvent dtde) {
@@ -172,9 +182,9 @@ public class MainUI {
     public void show() {
         JFrame frame = new JFrame("签名+多渠道打包工具");
         frame.setContentPane(new MainUI().mainPanel);
-        frame.setSize(600, 560); // 设置窗口的初始大小
-        frame.setMinimumSize(new Dimension(600, 560)); // 设置最小尺寸
-        frame.setMaximumSize(new Dimension(600, 560)); // 设置最大尺寸
+        frame.setSize(800, 840); // 设置窗口的初始大小
+        frame.setMinimumSize(frame.getSize()); // 设置最小尺寸
+        frame.setMaximumSize(frame.getSize()); // 设置最大尺寸
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
@@ -184,6 +194,7 @@ public class MainUI {
         try {
             configBean.setSign(cbSign.isSelected());
             configBean.setChannel(cbChannel.isSelected());
+            jta_log.removeAll();
 
             if (!cbSign.isSelected() && !cbChannel.isSelected()) {
                 JOptionPane.showMessageDialog(null, "请选择要打包方式：签名/多渠道打包", "消息", JOptionPane.INFORMATION_MESSAGE);
@@ -214,7 +225,6 @@ public class MainUI {
      * @return 签名后的文件
      */
     private File signBuild() throws Exception {
-
         if (!cbSign.isSelected()) {
             return null;
         }
@@ -225,16 +235,18 @@ public class MainUI {
         String aliasName = tfAlias.getText();
 
         if (keyStoreFile == null || tfKey.getText().isEmpty() || tfAlikey.getText().isEmpty() || tfAlias.getText().isEmpty()) {
+            log("签名文件，签名密钥，签名别名，签名别名密钥不能为空");
             return null;
         }
 
         //先使用zipalign对齐
-
+        log("开始...");
         // 获取资源文件的输入流
         InputStream exeInputStream = this.getClass().getResourceAsStream("/zipalign.exe");
 
         if (exeInputStream == null) {
-            throw new Exception("zipalign.exe找不到了");
+            String errorStr = "zipalign.exe找不到了";
+            throw new Exception(errorStr);
         }
 
         // 创建临时文件
@@ -247,7 +259,7 @@ public class MainUI {
         //开始对齐
         String exeCmdAlign = tempExePath.toFile().getPath() + " -f -v 4 " + apkFile.getAbsolutePath() + " " + zipalignApkFile.getAbsolutePath();
 
-        System.out.println("zipalign命令：" + exeCmdAlign);
+        log("apk对齐：" + exeCmdAlign);
 
         // 执行临时文件
         Process process = Runtime.getRuntime().exec(exeCmdAlign);
@@ -255,7 +267,7 @@ public class MainUI {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+            log(line);
         }
 
         // 关闭流
@@ -268,6 +280,7 @@ public class MainUI {
         Files.delete(tempExePath);
 
         if (exitCode != 0) {
+            log("执行zipalign对齐命令失败");
             JOptionPane.showMessageDialog(null, "执行zipalign对齐命令失败", "错误", JOptionPane.WARNING_MESSAGE);
             throw new RuntimeException("execute fail");
         }
@@ -284,10 +297,11 @@ public class MainUI {
                 zipalignApkFile.getAbsolutePath()
         };
 
-        System.out.println(new Gson().toJson(args));
+        log("开始签名");
+        log(new Gson().toJson(args));
 
         ApkSignerTool.main(args);
-        System.out.println("签名成功");
+        log("签名成功");
         if (zipalignApkFile.exists()) {
             zipalignApkFile.delete();
         }
@@ -309,9 +323,9 @@ public class MainUI {
             return;
         }
 
-
         if (channelsFile == null) {
             if (!msg.isEmpty()) {
+                log(msg);
                 JOptionPane.showMessageDialog(null, "打包失败,error：" + msg, "消息", JOptionPane.WARNING_MESSAGE);
             }
             return;
@@ -332,7 +346,7 @@ public class MainUI {
         try {
             commander.parse("batch", "-f", channelsFile.getAbsolutePath(), sourceApk.getAbsolutePath());
         } catch (ParameterException var6) {
-            System.out.println(var6.getMessage());
+            log(var6.getMessage());
             commander.usage();
             JOptionPane.showMessageDialog(null, "打包失败,error：" + var6.getMessage(), "消息", JOptionPane.WARNING_MESSAGE);
             return;
@@ -344,6 +358,7 @@ public class MainUI {
             subCommandList.get(parseCommand).parse();
         }
 
+        log("打包成功");
         JOptionPane.showMessageDialog(null, "打包成功", "消息", JOptionPane.INFORMATION_MESSAGE);
         btnGo.setEnabled(true);
 
@@ -396,23 +411,25 @@ public class MainUI {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayoutManager(10, 6, new Insets(40, 20, 40, 20), -1, -1));
         mainPanel.setAutoscrolls(true);
+        mainPanel.setMinimumSize(new Dimension(-1, -1));
+        mainPanel.setPreferredSize(new Dimension(-1, -1));
         mainPanel.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         tfApkFile = new JTextField();
         tfApkFile.setBackground(new Color(-263173));
         tfApkFile.setEditable(false);
         tfApkFile.setText("");
         tfApkFile.setToolTipText("");
-        mainPanel.add(tfApkFile, new GridConstraints(3, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
+        mainPanel.add(tfApkFile, new GridConstraints(2, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
         btnApkSelect = new JButton();
         Font btnApkSelectFont = this.$$$getFont$$$("JetBrains Mono", -1, 18, btnApkSelect.getFont());
         if (btnApkSelectFont != null) btnApkSelect.setFont(btnApkSelectFont);
         btnApkSelect.setText("选择");
-        mainPanel.add(btnApkSelect, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnApkSelect, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelChannels = new JLabel();
         Font labelChannelsFont = this.$$$getFont$$$(null, -1, 16, labelChannels.getFont());
         if (labelChannelsFont != null) labelChannels.setFont(labelChannelsFont);
         labelChannels.setText("渠道号配置文件");
-        mainPanel.add(labelChannels, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(labelChannels, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfChannelsFile = new JTextField();
         tfChannelsFile.setBackground(new Color(-263173));
         tfChannelsFile.setEditable(false);
@@ -420,17 +437,17 @@ public class MainUI {
         tfChannelsFile.setMargin(new Insets(2, 6, 2, 6));
         tfChannelsFile.setOpaque(true);
         tfChannelsFile.setText("");
-        mainPanel.add(tfChannelsFile, new GridConstraints(8, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
+        mainPanel.add(tfChannelsFile, new GridConstraints(7, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 38), null, 0, false));
         btnChannelSelect = new JButton();
         Font btnChannelSelectFont = this.$$$getFont$$$("JetBrains Mono", -1, 18, btnChannelSelect.getFont());
         if (btnChannelSelectFont != null) btnChannelSelect.setFont(btnChannelSelectFont);
         btnChannelSelect.setText("选择");
-        mainPanel.add(btnChannelSelect, new GridConstraints(8, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(btnChannelSelect, new GridConstraints(7, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setEnabled(true);
         Font label1Font = this.$$$getFont$$$("Courier New", -1, 14, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
-        label1.setText("<html>用法（支持拖动）：：<br>1.选择签名或者多渠道打包操作 默认签名+多渠道打包 <br>2.选择apk <br>3.需要签名时，选择签名文件，输入密钥信息 <br>4.需要多渠道打包时，选择.txt格式的渠道号配置文件，示例格式：huawei # 华为 <br>5.多个渠道就换行添加<br><br></html>");
+        label1.setText("<html>用法（支持拖动）：<br>1.选择签名或者多渠道打包操作 默认签名+多渠道打包 <br>2.选择apk <br>3.需要签名时，选择签名文件，输入密钥信息 <br>4.需要多渠道打包时，选择.txt格式的渠道号配置文件，示例格式：huawei # 华为 <br>5.多个渠道就换行添加<br><br></html>");
         mainPanel.add(label1, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         jpanel_go = new JPanel();
         jpanel_go.setLayout(new GridLayoutManager(1, 1, new Insets(16, 0, 0, 0), -1, -1));
@@ -445,43 +462,41 @@ public class MainUI {
         Font labelApkFont = this.$$$getFont$$$(null, -1, 16, labelApk.getFont());
         if (labelApkFont != null) labelApk.setFont(labelApkFont);
         labelApk.setText("apk文件");
-        mainPanel.add(labelApk, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(labelApk, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         Font label2Font = this.$$$getFont$$$(null, -1, 16, label2.getFont());
         if (label2Font != null) label2.setFont(label2Font);
         label2.setText("签名文件");
-        mainPanel.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(64, 39), null, 0, false));
+        mainPanel.add(label2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(64, 39), null, 0, false));
         btnKeystoreSelect = new JButton();
         Font btnKeystoreSelectFont = this.$$$getFont$$$("JetBrains Mono", -1, 18, btnKeystoreSelect.getFont());
         if (btnKeystoreSelectFont != null) btnKeystoreSelect.setFont(btnKeystoreSelectFont);
         btnKeystoreSelect.setText("选择");
-        mainPanel.add(btnKeystoreSelect, new GridConstraints(4, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 39), null, 0, false));
+        mainPanel.add(btnKeystoreSelect, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(78, 39), null, 0, false));
         tfKeystoreFile = new JTextField();
         tfKeystoreFile.setBackground(new Color(-263173));
         tfKeystoreFile.setEditable(false);
         tfKeystoreFile.setEnabled(true);
-        mainPanel.add(tfKeystoreFile, new GridConstraints(4, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 39), null, 0, false));
+        mainPanel.add(tfKeystoreFile, new GridConstraints(3, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, 39), null, 0, false));
         label_key = new JLabel();
         Font label_keyFont = this.$$$getFont$$$(null, -1, 14, label_key.getFont());
         if (label_keyFont != null) label_key.setFont(label_keyFont);
         label_key.setText("密钥");
-        mainPanel.add(label_key, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(label_key, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfKey = new JTextField();
-        mainPanel.add(tfKey, new GridConstraints(5, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        mainPanel.add(tfKey, new GridConstraints(4, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
         label_ali_key = new JLabel();
         Font label_ali_keyFont = this.$$$getFont$$$(null, -1, -1, label_ali_key.getFont());
         if (label_ali_keyFont != null) label_ali_key.setFont(label_ali_keyFont);
         label_ali_key.setText("别名密码");
-        mainPanel.add(label_ali_key, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(label_ali_key, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfAlikey = new JTextField();
-        mainPanel.add(tfAlikey, new GridConstraints(7, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        mainPanel.add(tfAlikey, new GridConstraints(6, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
         label_alias = new JLabel();
         label_alias.setText("密钥别名");
-        mainPanel.add(label_alias, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mainPanel.add(label_alias, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tfAlias = new JTextField();
-        mainPanel.add(tfAlias, new GridConstraints(6, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        mainPanel.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        mainPanel.add(tfAlias, new GridConstraints(5, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         cbChannel = new JCheckBox();
         Font cbChannelFont = this.$$$getFont$$$(null, -1, 18, cbChannel.getFont());
         if (cbChannelFont != null) cbChannel.setFont(cbChannelFont);
@@ -494,6 +509,16 @@ public class MainUI {
         cbSign.setSelected(true);
         cbSign.setText("签名");
         mainPanel.add(cbSign, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        mainPanel.add(scrollPane1, new GridConstraints(8, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(-1, 280), new Dimension(-1, 280), null, 0, false));
+        jta_log = new JTextArea();
+        jta_log.setCaretColor(new Color(-16777216));
+        jta_log.setDisabledTextColor(new Color(-16777216));
+        jta_log.setEnabled(false);
+        jta_log.setMargin(new Insets(16, 16, 16, 16));
+        jta_log.setSelectionColor(new Color(-16777216));
+        jta_log.setText("");
+        scrollPane1.setViewportView(jta_log);
     }
 
     /**
