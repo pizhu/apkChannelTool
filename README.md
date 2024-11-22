@@ -7,3 +7,12 @@
 
 ### 2024/11/22
 1. 增加日志输出
+
+
+### 使用
+执行gradle task：`launch4j`->`createExe` 
+
+命令使用：
+```groovy
+./gradlew createExe 
+```

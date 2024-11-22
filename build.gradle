@@ -1,6 +1,10 @@
 plugins {
     id 'java'
+    id 'edu.sc.seis.launch4j' version '3.0.6'
 }
+
+
+
 
 group = 'pz.tools.apkchannel'
 version = '1.0.2'
@@ -33,4 +37,13 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/LICENSE.txt'
+
+    duplicatesStrategy = 'exclude'
+}
+
+launch4j {
+    mainClassName = 'pz.tools.apkchannel.Main'
+    icon = "${projectDir}/app.ico"
+
+    outfile = "ApkSignTool_v${project.version}.exe"
 }
