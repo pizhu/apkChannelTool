@@ -12,7 +12,7 @@
 
 
 
-### 使用
+## 使用
 执行gradle task：`launch4j`->`createExe`
 
 命令使用：
