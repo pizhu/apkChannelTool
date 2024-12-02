@@ -5,12 +5,12 @@
 
 ![Image text](/screenshot/img1.png)
 
+点击下载：[ApkSignTool_v1.0.2](https://gitee.com/pizhuzz/apk-channel-tool/releases/download/v1.0.2/ApkSignTool_v1.0.2.exe)
+
 ## 更新日志
 
 ### 2024/11/22
 1. 增加日志输出
-
-
 
 ## 使用
 执行gradle task：`launch4j`->`createExe`
